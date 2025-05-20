@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Сервис ознакомления с результатами ЕГЭ</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+    }
+    
+    /* Стили шапки из первого файла */
+    .header-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 15px;
+      background: #fff;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo img {
+      height: 40px;
+    }
+    
+    .header-text {
+      font-size: 16px;
+      color: #444;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    /* Стили из второго файла */
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #0050b3;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+    }
+    
+    .results {
+      display: none;
+    }
+    
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    
+    th {
+      background-color: #f0f0f0;
+    }
+    
+    .fail {
+      color: red;
+      font-weight: bold;
+    }
+    
+    .info-block {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    
+    .info-block p {
+      margin: 6px 0;
+    }
+    
+    .stamp {
+      margin-top: 30px;
+      text-align: right;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .appeal-button {
+      margin-top: 30px;
+      padding: 12px;
+      width: 100%;
+      background-color: #d9534f;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .appeal-button:hover {
+      background-color: #c9302c;
+    }
+    
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+    }
+    
+    /* Капча из первого файла */
+    .captcha {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .captcha-box {
+      background: #e0e0e0;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border: 1px solid #999;
+    }
+    
+    .warning {
+      margin-top: 15px;
+      font-size: 13px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <!-- Шапка из первого файла -->
+  <div class="header-container">
+    <div class="logo">
+      <img src="https://ege.edu.ru/images/logo.svg" alt="ЕГЭ">
+      <div>
+        <div>Официальный информационный портал</div>
+        <strong>ЕДИНОГО ГОСУДАРСТВЕННОГО ЭКЗАМЕНА</strong>
+      </div>
+    </div>
+    <h2>СЕРВИС ОЗНАКОМЛЕНИЯ С РЕЗУЛЬТАТАМИ ЕГЭ</h2>
+  </div>
+
+  <!-- Форма входа из второго файла с элементами первого -->
+  <div class="container" id="loginForm">
+    <label>Фамилия</label>
+    <input type="text" value="Антонов" readonly>
+    
+    <label>Имя</label>
+    <input type="text" value="Максим" readonly>
+    
+    <label>Отчество</label>
+    <input type="text" value="Константинович" readonly>
+    
+    <label>Номер документа (без серии)</label>
+    <input type="text" placeholder="Введите номер паспорта" required>
+    
+    <label>Регион</label>
+    <input type="text" value="Московская область, г. Сергиев Посад" readonly>
+    
+    <div class="checkbox">
+      <input type="checkbox" checked> Я согласен на обработку персональных данных
+    </div>
+<div class="warning">
+      Внимание: Решение о публикации результатов на официальном портале ЕГЭ принимается ОИВ субъекта РФ...
+    </div>
+    
+    <label>Введите код с картинки</label>
+    <div class="captcha">
+      <div class="captcha-box">431758</div>
+      <button style="width:auto; background:#aaa;">ПЕРЕГЕНЕРИРОВАТЬ</button>
+    </div>
+    
+    <input type="text" placeholder="Введите код здесь">
+    
+    <button onclick="startLoading()">ПРОВЕРИТЬ РЕЗУЛЬТАТЫ</button>
+  </div>
+
+  <!-- Экран загрузки из второго файла -->
+  <div class="container" id="loadingScreen" style="display: none;">
+    <div class="loading">Проверка данных в федеральной базе...</div>
+  </div>
+
+  <!-- Результаты из второго файла -->
+  <div class="container results" id="resultsScreen">
+    <h1>Результаты ЕГЭ – 2025</h1>
+    <div class="info-block">
+      <p><strong>ФИО:</strong> Антонов Максим Константинович</p>
+      <p><strong>Дата рождения:</strong> 04.06.2007</p>
+      <p><strong>Регион сдачи:</strong> Московская область, г. Сергиев Посад</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Предмет</th>
+          <th>Дата экзамена</th>
+          <th>Баллы</th>
+          <th>Результат</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Математика (профиль)</td>
+          <td>27 мая 2025</td>
+          <td class="fail">18</td>
+          <td class="fail">Неудовлетворительно</td>
+        </tr>
+        <tr>
+          <td>Русский язык</td>
+          <td>30 мая 2025</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Обществознание</td>
+          <td>2 июня 2025</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="appeal-button" onclick="alert('Заявка на апелляцию принята. Ожидайте рассмотрения.');">Подать апелляцию</button>
+    <div class="footer">© 2001–2025 Федеральная служба по надзору в сфере образования и науки</div>
+  </div>
+
+  <script>
+    function startLoading() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('loadingScreen').style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('resultsScreen').style.display = 'block';
+        
+        // Добавляем эффект "шока" - красное мерцание
+        setTimeout(function() {
+          document.body.style.backgroundColor = '#ffeeee';
+          setTimeout(function() {
+            document.body.style.backgroundColor = '#f3f3f3';
+          }, 300);
+        }, 500);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
