@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Сервис ознакомления с результатами ЕГЭ</title>
+  <title>Результаты ЕГЭ</title>
   <style>
     body {
       margin: 0;
@@ -10,32 +10,50 @@
       background-color: #f3f3f3;
     }
     
-    /* Стили шапки из первого файла */
-    .header-container {
+    /* Шапка как на фото */
+    .official-header {
+      background-color: #fff;
+      padding: 15px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .header-content {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 15px;
-      background: #fff;
-    }
-    
-    .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      padding: 0 15px;
     }
     
-    .logo img {
-      height: 40px;
+    .logo-container {
+      display: flex;
+      align-items: center;
     }
     
-    .header-text {
+    .logo-img {
+      height: 50px;
+      margin-right: 15px;
+    }
+    
+    .logo-text {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    
+    .logo-title {
+      font-weight: bold;
       font-size: 16px;
-      color: #444;
-      margin-top: 10px;
-      text-align: center;
+      margin-top: 2px;
     }
     
-    /* Стили из второго файла */
+    .header-title {
+      margin-left: auto;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    /* Основной контейнер */
     .container {
       max-width: 600px;
       margin: 30px auto;
@@ -57,12 +75,13 @@
       color: #333;
     }
     
-    input[type="text"] {
+    input[type="text"], select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     
     button {
@@ -75,12 +94,33 @@
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #003d82;
     }
     
     .loading {
       text-align: center;
       font-size: 18px;
       color: #555;
+      padding: 30px 0;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #0050b3;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     
     .results {
@@ -111,17 +151,13 @@
     .info-block {
       margin-top: 20px;
       font-size: 16px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
     }
     
     .info-block p {
-      margin: 6px 0;
-    }
-    
-    .stamp {
-      margin-top: 30px;
-      text-align: right;
-      font-size: 14px;
-      color: #666;
+      margin: 8px 0;
     }
     
     .appeal-button {
@@ -145,9 +181,10 @@
       font-size: 12px;
       color: #999;
       text-align: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
     }
     
-    /* Капча из первого файла */
     .captcha {
       margin-top: 15px;
       display: flex;
@@ -161,75 +198,102 @@
       font-size: 18px;
       font-weight: bold;
       border: 1px solid #999;
+      letter-spacing: 1px;
     }
     
     .warning {
       margin-top: 15px;
       font-size: 13px;
-      color: red;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    .checkbox {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .checkbox input {
+      width: auto;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-  <!-- Шапка из первого файла -->
-  <div class="header-container">
-    <div class="logo">
-      <img src="https://ege.edu.ru/images/logo.svg" alt="ЕГЭ">
-      <div>
-        <div>Официальный информационный портал</div>
-        <strong>ЕДИНОГО ГОСУДАРСТВЕННОГО ЭКЗАМЕНА</strong>
+  <!-- Шапка -->
+  <div class="official-header">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="https://ege.edu.ru/images/logo.svg" alt="ЕГЭ" class="logo-img">
+        <div class="logo-text">
+          Официальный информационный портал<br>
+          <span class="logo-title">ЕДИНОГО ГОСУДАРСТВЕННОГО ЭКЗАМЕНА</span>
+        </div>
       </div>
+      <div class="header-title">СЕРВИС ОЗНАКОМЛЕНИЯ С РЕЗУЛЬТАТАМИ ЕГЭ</div>
     </div>
-    <h2>СЕРВИС ОЗНАКОМЛЕНИЯ С РЕЗУЛЬТАТАМИ ЕГЭ</h2>
   </div>
 
-  <!-- Форма входа из второго файла с элементами первого -->
+  <!-- Форма входа -->
   <div class="container" id="loginForm">
     <label>Фамилия</label>
-    <input type="text" value="Антонов" readonly>
+    <input type="text" placeholder="Введите фамилию" required>
     
     <label>Имя</label>
-    <input type="text" value="Максим" readonly>
+    <input type="text" placeholder="Введите имя" required>
     
     <label>Отчество</label>
-    <input type="text" value="Константинович" readonly>
+    <input type="text" placeholder="Введите отчество (при наличии)">
     
-    <label>Номер документа (без серии)</label>
-    <input type="text" placeholder="Введите номер паспорта" required>
+    <label>Код регистрации / Номер документа (без серии)</label>
+    <input type="text" placeholder="Введите данные" required>
     
     <label>Регион</label>
-    <input type="text" value="Московская область, г. Сергиев Посад" readonly>
+    <select required>
+      <option value="">Выберите регион</option>
+      <option value="50" selected>Московская область</option>
+      <option value="77">Москва</option>
+      <option value="78">Санкт-Петербург</option>
+      <option value="71">Тульская область</option>
+      <option value="54">Новосибирская область</option>
+    </select>
     
     <div class="checkbox">
-      <input type="checkbox" checked> Я согласен на обработку персональных данных
+      <input type="checkbox" checked required> Я согласен на обработку персональных данных
     </div>
-<div class="warning">
-      Внимание: Решение о публикации результатов на официальном портале ЕГЭ принимается ОИВ субъекта РФ...
+    
+    <div class="warning">
+      Публикация результатов на официальном портале ЕГЭ принимается ОИВ субъекта РФ. Если вашего региона нет в списке, необходимо обратиться в ОИВ Вашего региона.
     </div>
     
     <label>Введите код с картинки</label>
     <div class="captcha">
-      <div class="captcha-box">431758</div>
-      <button style="width:auto; background:#aaa;">ПЕРЕГЕНЕРИРОВАТЬ</button>
+      <div class="captcha-box">ФЭЭ 758</div>
+      <button type="button" style="width:auto; background:#aaa; padding: 8px 12px;">ПЕРЕГЕНЕРИРОВАТЬ</button>
     </div>
     
-    <input type="text" placeholder="Введите код здесь">
+    <input type="text" placeholder="Введите код здесь" required>
     
-    <button onclick="startLoading()">ПРОВЕРИТЬ РЕЗУЛЬТАТЫ</button>
+    <button onclick="checkCredentials()">ПРОВЕРИТЬ РЕЗУЛЬТАТЫ</button>
   </div>
 
-  <!-- Экран загрузки из второго файла -->
+  <!-- Загрузка -->
   <div class="container" id="loadingScreen" style="display: none;">
-    <div class="loading">Проверка данных в федеральной базе...</div>
+    <div class="loading">
+      <div class="spinner"></div>
+      Проверка данных в федеральной базе...
+    </div>
   </div>
 
-  <!-- Результаты из второго файла -->
+  <!-- Результаты -->
   <div class="container results" id="resultsScreen">
     <h1>Результаты ЕГЭ – 2025</h1>
     <div class="info-block">
-      <p><strong>ФИО:</strong> Антонов Максим Константинович</p>
-      <p><strong>Дата рождения:</strong> 04.06.2007</p>
+      <p><strong>ФИО:</strong> <span id="result-fio"></span></p>
+      <p><strong>Дата рождения:</strong> <span id="result-birthdate"></span></p>
       <p><strong>Регион сдачи:</strong> Московская область, г. Сергиев Посад</p>
+      <p><strong>Код регистрации:</strong> <span id="result-code"></span></p>
     </div>
     <table>
       <thead>
@@ -251,38 +315,65 @@
           <td>Русский язык</td>
           <td>30 мая 2025</td>
           <td>—</td>
-          <td>—</td>
+          <td>Обработка</td>
         </tr>
         <tr>
           <td>Обществознание</td>
           <td>2 июня 2025</td>
           <td>—</td>
-          <td>—</td>
+          <td>Ожидается</td>
         </tr>
       </tbody>
     </table>
-    <button class="appeal-button" onclick="alert('Заявка на апелляцию принята. Ожидайте рассмотрения.');">Подать апелляцию</button>
-    <div class="footer">© 2001–2025 Федеральная служба по надзору в сфере образования и науки</div>
+    <button class="appeal-button" onclick="alert('Для подачи апелляции необходимо лично обратиться в конфликтную комиссию вашего региона в течение 2 рабочих дней после объявления результатов.');">Подать апелляцию</button>
+    <div class="footer">
+      © 2001–2025 Федеральная служба по надзору в сфере образования и науки<br>
+      Результаты считаются предварительными до официального опубликования
+    </div>
   </div>
 
   <script>
-    function startLoading() {
+    function checkCredentials() {
+      const lastName = document.querySelector('#loginForm input:nth-of-type(1)').value.trim();
+      const firstName = document.querySelector('#loginForm input:nth-of-type(2)').value.trim();
+      const docNumber = document.querySelector('#loginForm input:nth-of-type(4)').value.trim();
+      
+      if (!lastName⠟⠺⠞⠵⠞⠞⠟⠵⠟⠟⠺⠺⠟⠞!docNumber) {
+        alert('Пожалуйста, заполните все обязательные поля!');
+        return;
+      }
+
+      // Показываем загрузку
       document.getElementById('loginForm').style.display = 'none';
       document.getElementById('loadingScreen').style.display = 'block';
+
+      // Заполняем данные в результатах
+      document.getElementById('result-fio').textContent = ${lastName} ${firstName} ${document.querySelector('#loginForm input:nth-of-type(3)').value.trim()};
+      document.getElementById('result-birthdate').textContent = '04.06.2007';
+      document.getElementById('result-code').textContent = docNumber;
 
       setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('resultsScreen').style.display = 'block';
         
-        // Добавляем эффект "шока" - красное мерцание
-        setTimeout(function() {
+        // Эффект "шока"
+        setTimeout(() => {
           document.body.style.backgroundColor = '#ffeeee';
-          setTimeout(function() {
+          setTimeout(() => {
             document.body.style.backgroundColor = '#f3f3f3';
           }, 300);
         }, 500);
       }, 3000);
     }
+
+    // Обработка кнопки перегенерации капчи
+    document.querySelector('.captcha button').addEventListener('click', function() {
+      const letters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+      const randomLetters = letters.charAt(Math.floor(Math.random() * letters.length)) + 
+                          letters.charAt(Math.floor(Math.random() * letters.length));
+      const randomNumbers = Math.floor(100 + Math.random() * 900);
+      document.querySelector('.captcha-box').textContent = ${randomLetters} ${randomNumbers};
+    });
   </script>
 </body>
 </html>
